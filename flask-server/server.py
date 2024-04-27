@@ -1,29 +1,21 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS
-from openai import OpenAI
 import os
-
-# Use an environment variable for the API key
-api_key = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=api_key)
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, origins=["http://localhost:3000"])
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST')
+    return response
 
 @app.route('/api/prompt', methods=['POST'])
 def get_response():
-    if request.is_json:
-        user_message = request.json['message']
-        response = client.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": user_message},
-            ],
-        )
-        return jsonify(response.choices[0].message['content'])
-    else:
-        return jsonify({"error": "Request was not JSON"}), 415
+    # Send hello as message
+    return jsonify({'message': 'Hello!'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

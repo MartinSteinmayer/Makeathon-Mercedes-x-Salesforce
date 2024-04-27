@@ -16,12 +16,12 @@ function Chatbot() {
     event.preventDefault();  // Prevent the form from refreshing the page
     try {
         if (input.trim() === '') {
-            return;
+            return; // If input is empty, do nothing
         }
         const userInput = input;
         setInput('');  // Clear input after sending
-        setMessages([...messages, { text: userInput, sender: 'user' }]);
-        
+        setMessages(messages => [...messages, { text: userInput, sender: 'user' }]);
+
         const response = await fetch('http://localhost:5000/api/prompt', {
           method: 'POST',
           headers: {
@@ -29,16 +29,24 @@ function Chatbot() {
           },
           body: JSON.stringify({ message: userInput })
         });
+
         if (response.ok) {
           const data = await response.json();
-          console.log(data); // Handle the data received from the server
+          // Update the messages state to include the bot's response
+          setTimeout(() => {
+            setMessages(messages => [...messages, { text: data.message, sender: 'bot' }]);
+          }
+          , 1000);  // Simulate response delay
         } else {
-          throw new Error('Server responded with non-2xx status');
+          // Optionally handle HTTP errors here
+          console.error('Server responded with non-2xx status');
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Request failed', error);
-      }
+        // Optionally handle network errors here
+    }
 };
+
 
 /*
   // Simulate a bot response
