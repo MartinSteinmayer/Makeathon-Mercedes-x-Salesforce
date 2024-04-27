@@ -4,10 +4,10 @@
 
 You will need npm, python and nodejs installed.
 
-**IMPORTANT:** Make sure to grab the `OPENAI_API_KEY` from the presentation slides (applicable if you are a member of the makeathon).
-
-## Prerequisites
+## Setup
 To run the app, you will need to configure both the backend and frontend environments. Follow these instructions in two separate terminal windows.
+
+**IMPORTANT:** Make sure to grab the `OPENAI_API_KEY` from the presentation slides (applicable if you are a member of the makeathon).
 
 ### Terminal 1: Backend Setup
 
