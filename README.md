@@ -2,7 +2,7 @@
 
 ## Installing Dependencies
 
-### You will need npm, python and nodejs installed.
+You will need npm, python and nodejs installed.
 
 **IMPORTANT:** Make sure to grab the `OPENAI_API_KEY` from the presentation slides (applicable if you are a member of the makeathon).
 
