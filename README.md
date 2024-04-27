@@ -10,7 +10,7 @@ You will need npm, python and nodejs installed.
 
 To run the app you will need to open two terminals:
 
-1 - Backend: In the source directory, run "python (or python3) -m venv flaskvenv" then "source flaskvenv/bin/activate" to initiate the Virtual Environment. Before running the backend, get the OpenAI api key and run "export OPENAI_API_KEY="your_key". To run the backend run "python3 (or python) flask-server/server.py". The Virtual Environment should already have the necessary dependencies, but if not, just download the ones missing.
+1 - Backend: In the source directory, run "python (or python3) -m venv flaskvenv" then "source flaskvenv/bin/activate" to initiate the Virtual Environment. Before running the backend, get the OpenAI api key and run "export OPENAI_API_KEY="your_key". To run the backend run "python3 (or python) flask-server/server.py". The Virtual Environment should already have the necessary dependencies, but if not, just run "npm install openai flask-cors Flask".
 
 2 - Frontend: Go to the "client" directory and run "npm install" and then "npm start".
 
