@@ -9,16 +9,13 @@ client = OpenAI()
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
 
-thread = client.beta.threads.create()
-print(thread)
-
 def wait_on_run(run, thread):
     while run.status == "queued" or run.status == "in_progress":
         run = client.beta.threads.runs.retrieve(
             thread_id=thread.id,
             run_id=run.id,
         )
-        time.sleep(0.5)
+        time.sleep(0.2)
     return run
 
 def submit_message(assistant_id, thread, user_message):
@@ -36,6 +33,7 @@ def get_response(thread):
 
 @app.route('/api/new_thread', methods=['GET'])
 def new_thread():
+    global thread
     thread = client.beta.threads.create()
     return jsonify({'thread_id': thread.id})
 
@@ -55,11 +53,6 @@ def get_response():
         completion = wait_on_run(run, thread)
 
         messages = client.beta.threads.messages.list(thread_id=thread.id)
-
-        #print(messages)
-        print("alo")
-        print(messages.data[0].content[0].text.value)
-        print("alo")
         
         return jsonify({'message': messages.data[0].content[0].text.value})
 

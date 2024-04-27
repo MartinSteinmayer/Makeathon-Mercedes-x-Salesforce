@@ -17,6 +17,7 @@ function Chatbot() {
       .then(response => response.json())
       .then(data => {
         setThreadId(data.thread_id);
+        console.log('New thread ID:', data.thread_id);
       })
       .catch(error => {
         console.error('Error fetching new thread:', error);
@@ -67,7 +68,7 @@ function Chatbot() {
 
   return (
     <div className="chatbot">
-      <h2>Chatbot</h2>
+      <h2>Michael Salesman</h2>
       <div className="messages">
         {messages.map((msg, index) => (
           <p key={index} className={`message ${msg.sender}`}>
