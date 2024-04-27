@@ -1,6 +1,10 @@
 from flask import Flask, jsonify, request
 import os
 from flask_cors import CORS
+from openai import OpenAI
+from dotenv import load_dotenv
+
+client = OpenAI()
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
@@ -14,8 +18,18 @@ def add_cors_headers(response):
 
 @app.route('/api/prompt', methods=['POST'])
 def get_response():
-    # Send hello as message
-    return jsonify({'message': 'Hello!'})
+    try:
+        completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+            {"role": "user", "content": request.json["message"]}
+        ]
+        )
+        return jsonify({'message': completion.choices[0].message.content})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

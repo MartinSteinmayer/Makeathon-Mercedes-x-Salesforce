@@ -40,6 +40,7 @@ function Chatbot() {
         } else {
           // Optionally handle HTTP errors here
           console.error('Server responded with non-2xx status');
+          console.error(response);
         }
     } catch (error) {
         console.error('Request failed', error);
