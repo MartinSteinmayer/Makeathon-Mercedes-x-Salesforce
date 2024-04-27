@@ -3,14 +3,12 @@ from flask_cors import CORS
 from openai import OpenAI
 import os
 
-# Set the API key
-client = OpenAI(
-    api_key="sk-proj-fNlT2VdDMr5BDZxB9buST3BlbkFJYJzvYQet0MjRrqXLPND4",
-)
+# Use an environment variable for the API key
+api_key = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=api_key)
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
-
 
 @app.route('/api/prompt', methods=['POST'])
 def get_response():
