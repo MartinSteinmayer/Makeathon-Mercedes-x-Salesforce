@@ -4,57 +4,61 @@ import './Chatbot.css';
 function Chatbot() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
-  const endOfMessagesRef = useRef(null); 
-
+  const [isSending, setIsSending] = useState(false); // State to track request status
+  const endOfMessagesRef = useRef(null);
+  const [threadId, setThreadId] = useState(null);
 
   const handleInputChange = (event) => {
     setInput(event.target.value);
   };
 
+  useEffect(() => {
+    fetch('/api/new_thread')
+      .then(response => response.json())
+      .then(data => {
+        setThreadId(data.thread_id);
+      })
+      .catch(error => {
+        console.error('Error fetching new thread:', error);
+      });
+  }, []);
+
+
   // Send message when the user submits
   const sendMessage = async (event) => {
-    event.preventDefault();  // Prevent the form from refreshing the page
+    event.preventDefault(); // Prevent the form from refreshing the page
+    if (input.trim() === '' || isSending) {
+      return; // If input is empty or already sending, do nothing
+    }
+    setIsSending(true); // Set sending to true
+    const userInput = input;
+    setInput(''); // Clear input after sending
+    setMessages((messages) => [...messages, { text: userInput, sender: 'user' }]);
+
     try {
-        if (input.trim() === '') {
-            return; // If input is empty, do nothing
-        }
-        const userInput = input;
-        setInput('');  // Clear input after sending
-        setMessages(messages => [...messages, { text: userInput, sender: 'user' }]);
+      const response = await fetch('http://localhost:5000/api/prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: userInput }),
+      });
 
-        const response = await fetch('http://localhost:5000/api/prompt', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message: userInput })
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          // Update the messages state to include the bot's response
-          setMessages(messages => [...messages, { text: data.message, sender: 'bot' }]);
-        } else {
-          // Optionally handle HTTP errors here
-          console.error('Server responded with non-2xx status');
-          console.error(response);
-        }
+      if (response.ok) {
+        const data = await response.json();
+        // Update the messages state to include the bot's response
+        setMessages((messages) => [...messages, { text: data.message, sender: 'bot' }]);
+      } else {
+        // Optionally handle HTTP errors here
+        console.error('Server responded with non-2xx status');
+      }
     } catch (error) {
-        console.error('Request failed', error);
-        // Optionally handle network errors here
+      console.error('Request failed', error);
+      // Optionally handle network errors here
+    } finally {
+      setIsSending(false); // Set sending to false regardless of response
     }
-};
-
-
-/*
-  // Simulate a bot response
-  useEffect(() => {
-    if (messages.length && messages[messages.length - 1].sender === 'user') {
-      setTimeout(() => {
-        setMessages(msgs => [...msgs, { text: "Let's pretend I understood that.", sender: 'bot' }]);
-      }, 1000);  // Simulate response delay
-    }
-  }, [messages]);*/
+  };
 
   // Scroll to the last message
   useEffect(() => {
@@ -70,7 +74,7 @@ function Chatbot() {
             {msg.text}
           </p>
         ))}
-        <div ref={endOfMessagesRef}></div>  {/* Invisible element to mark end of messages */}
+        <div ref={endOfMessagesRef}></div> {/* Invisible element to mark end of messages */}
       </div>
       <form onSubmit={sendMessage}>
         <input
@@ -78,8 +82,9 @@ function Chatbot() {
           value={input}
           onChange={handleInputChange}
           placeholder="Type a message..."
+          disabled={isSending} // Disable input when sending
         />
-        <button type="submit">Send</button>
+        <button type="submit" disabled={isSending}>Send</button> {/* Disable button when sending */}
       </form>
     </div>
   );

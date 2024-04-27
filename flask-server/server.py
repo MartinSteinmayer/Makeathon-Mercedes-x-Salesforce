@@ -2,11 +2,42 @@ from flask import Flask, jsonify, request
 import os
 from flask_cors import CORS
 from openai import OpenAI
+import time
 
 client = OpenAI()
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
+
+thread = client.beta.threads.create()
+print(thread)
+
+def wait_on_run(run, thread):
+    while run.status == "queued" or run.status == "in_progress":
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread.id,
+            run_id=run.id,
+        )
+        time.sleep(0.5)
+    return run
+
+def submit_message(assistant_id, thread, user_message):
+    client.beta.threads.messages.create(
+        thread_id=thread.id, role="user", content=user_message
+    )
+    return client.beta.threads.runs.create(
+        thread_id=thread.id,
+        assistant_id=assistant_id,
+    )
+
+
+def get_response(thread):
+    return client.beta.threads.messages.list(thread_id=thread.id, order="asc")
+
+@app.route('/api/new_thread', methods=['GET'])
+def new_thread():
+    thread = client.beta.threads.create()
+    return jsonify({'thread_id': thread.id})
 
 @app.after_request
 def add_cors_headers(response):
@@ -18,14 +49,19 @@ def add_cors_headers(response):
 @app.route('/api/prompt', methods=['POST'])
 def get_response():
     try:
-        completion = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
-            {"role": "user", "content": request.json["message"]}
-        ]
-        )
-        return jsonify({'message': completion.choices[0].message.content})
+
+        run = submit_message("asst_efvdvguie4T3QCDfEeFzZ5vR", thread, request.json['message'])
+        
+        completion = wait_on_run(run, thread)
+
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+
+        #print(messages)
+        print("alo")
+        print(messages.data[0].content[0].text.value)
+        print("alo")
+        
+        return jsonify({'message': messages.data[0].content[0].text.value})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
