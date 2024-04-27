@@ -33,10 +33,7 @@ function Chatbot() {
         if (response.ok) {
           const data = await response.json();
           // Update the messages state to include the bot's response
-          setTimeout(() => {
-            setMessages(messages => [...messages, { text: data.message, sender: 'bot' }]);
-          }
-          , 1000);  // Simulate response delay
+          setMessages(messages => [...messages, { text: data.message, sender: 'bot' }]);
         } else {
           // Optionally handle HTTP errors here
           console.error('Server responded with non-2xx status');

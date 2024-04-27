@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 import os
 from flask_cors import CORS
 from openai import OpenAI
-from dotenv import load_dotenv
 
 client = OpenAI()
 
@@ -20,7 +19,7 @@ def add_cors_headers(response):
 def get_response():
     try:
         completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
             {"role": "user", "content": request.json["message"]}
