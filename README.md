@@ -1,17 +1,61 @@
-# Makeathon-Mercedes-x-Salesforce
+# Mercedes-x-Salesforce Sales Assistant
 
-## Setup
+## Installing Dependencies
 
-### Installing Dependencies
+### You will need npm, python and nodejs installed.
 
-You will need npm, python and nodejs installed.
+**IMPORTANT:** Make sure to grab the `OPENAI_API_KEY` from the presentation slides (applicable if you are a member of the makeathon).
 
-### Running The App
+## Prerequisites
+To run the app, you will need to configure both the backend and frontend environments. Follow these instructions in two separate terminal windows.
 
-To run the app you will need to open two terminals:
+### Terminal 1: Backend Setup
 
-1 - Backend: In the source directory, run "python (or python3) -m venv flaskvenv" then "source flaskvenv/bin/activate" to initiate the Virtual Environment. Before running the backend, get the OpenAI api key and run "export OPENAI_API_KEY="your_key". To run the backend run "python3 (or python) flask-server/server.py". The Virtual Environment should already have the necessary dependencies, but if not, just run "npm install openai flask-cors Flask".
+1. **Create a Virtual Environment**  
+   Navigate to the source directory and run:  
+   ```
+   python3 -m venv flaskvenv
+   ```
 
-2 - Frontend: Go to the "client" directory and run "npm install" and then "npm start".
+2. **Activate the Virtual Environment**  
+   ```
+   source flaskvenv/bin/activate
+   ```
 
-After these steps the app should be up and running in http://localhost:3000/
+3. **Install Dependencies**  
+   Install necessary libraries using npm:
+   ```
+   npm install openai flask-cors Flask
+   ```
+
+4. **Set Environment Variable**  
+   Replace `your_key` with your actual API key:
+   ```
+   export OPENAI_API_KEY="your_key"
+   ```
+
+5. **Start the Backend Server**  
+   Run the following command to launch the server:
+   ```
+   python3 flask-server/server.py
+   ```
+
+### Terminal 2: Frontend Setup
+
+1. **Navigate to Client Directory**  
+   ```
+   cd client
+   ```
+
+2. **Install and Start the Frontend**  
+   Install dependencies and start the frontend service:
+   ```
+   npm install
+   npm start
+   ```
+
+## Accessing the Application
+
+After completing the above steps, the app should be up and running at [http://localhost:3000/](http://localhost:3000/).
+
+**Good luck finding the perfect car for your needs!**
